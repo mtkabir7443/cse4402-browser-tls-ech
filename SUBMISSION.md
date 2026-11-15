@@ -1,19 +1,21 @@
-# Delivery checklist — prepared, not submitted
+# Delivery checklist — published code, not submitted
 
 **Mohammed Kabir · NetID mtk21002 · CSE 4402 SEC001 · Solo project**
 
 | Milestone | Deliverable | Current state |
 |---|---|---|
 | November 22, 2026 | `documents/CSE4402_TLS_ECH_Design_Nov22.pdf` | Ready for the design/methods milestone; not submitted |
-| December 18, 2026 | `documents/CSE4402_TLS_ECH_Report.pdf` plus an accessible GitHub code link | Report and local Git repository prepared; hosted link still pending |
+| December 18, 2026 | `documents/CSE4402_TLS_ECH_Report.pdf` plus an accessible GitHub code link | Report prepared; GitHub repository published; HuskyCT submission pending |
 
 The ZIP is a convenient complete package, not a substitute for whichever upload fields the course uses. No exact time or upload format was prescribed in the supplied project instructions. Verify the current LMS destination before any future submission.
 
-## GitHub publication, when authorized
+## Published GitHub repository
 
-The standalone local repository contains only intended source, documentation, PDFs and sanitized results. It has no configured remote. Suggested name: `cse4402-browser-tls-ech`. Create the chosen repository, add its actual URL as `origin`, and push the prepared branch. Confirm the professor can access that URL and the committed files, then include the URL with the final report. Never publish the parent coursework workspace, `.runtime`, `.tools`, private `evidence/`, browser profiles or raw logs.
+**Code link:** https://github.com/mtkabir7443/cse4402-browser-tls-ech
 
-Publication was deliberately not performed during preparation. Before publishing or submitting, check `git status`, review the exact tracked file list, run the included result verifier, verify the package checksums, and review any changes since the prepared artifact. No email or LMS action has been taken.
+Published November 15, 2026 with user authorization. The repository is publicly accessible; its default branch is `codex/prepare-submission`. A fresh download matched all 55 tracked files and passed verification of all 252 observations. The repository contains only intended source, documentation, PDFs and sanitized results. The parent coursework workspace, `.runtime`, `.tools`, private `evidence/`, browser profiles and raw logs are excluded.
+
+Use this code link with the final report. Before any later graded submission, check the exact final artifacts, run the result verifier and complete the final delivery review. **No email or HuskyCT submission has been performed.** Source publication does not deploy a public live demo.
 
 ## What the grader can review immediately
 

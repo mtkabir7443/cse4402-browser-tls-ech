@@ -33,4 +33,6 @@ The included results preserve all 252 observations, exact build identities, nego
 
 The live program creates private append-only logs in `evidence/`; the packaged historical study is in `results/`. A fresh experiment uses a new batch and generated `browsers.json`. Do not replace the fixed historical results with a different cohort under the same study label.
 
-[Requirements coverage](requirements-coverage.md) maps every professor requirement to code, evidence or documentation. [SUBMISSION.md](SUBMISSION.md) separates the two deadlines and remaining delivery actions. Local demo is accepted; external hosting is optional. This prepared copy has not been published or submitted.
+[Requirements coverage](requirements-coverage.md) maps every professor requirement to code, evidence or documentation. [SUBMISSION.md](SUBMISSION.md) separates the two deadlines and remaining delivery actions. Local demo is accepted; external hosting is optional.
+
+**Published November 15, 2026:** [GitHub repository](https://github.com/mtkabir7443/cse4402-browser-tls-ech). The source, documents and sanitized results were downloaded from GitHub and verified against the file manifest. HuskyCT submission remains pending. The unchanged design/report record the study's earlier preparation status; this note supplies the subsequent publication status. Publishing source on GitHub does not deploy the live TLS/DNS test services.

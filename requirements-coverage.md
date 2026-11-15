@@ -1,6 +1,6 @@
 # Requirements coverage
 
-Requirements source: [approved scope](scope.md), course handout and supplied professor correspondence. This maps completed local work; publication, submission and the eventual grade are separate.
+Requirements source: [approved scope](scope.md), course handout and supplied professor correspondence. This maps completed local work and verified GitHub publication; submission and the eventual grade are separate.
 
 | Requirement | Included implementation / evidence | Status |
 |---|---|---|
@@ -13,7 +13,7 @@ Requirements source: [approved scope](scope.md), course handout and supplied pro
 | Written report with motivation, background, results, conclusions | `documents/CSE4402_TLS_ECH_Report.pdf`, `report.md`; all twelve measurement motivations included | Prepared |
 | Documentation and reproducibility | Setup/cleanup, pinned archive acquisition, fresh profiles, trust/policy handling, tests, result verification, limitations | Included; exact installed Edge build may change on a new host |
 | November 22 design/methods | `documents/CSE4402_TLS_ECH_Design_Nov22.pdf`, `design.md` | Prepared, not submitted |
-| December 18 final report and GitHub code link | Report and Git-ready source included | GitHub publication/link and graded submission pending |
+| December 18 final report and GitHub code link | Report included; [public GitHub repository](https://github.com/mtkabir7443/cse4402-browser-tls-ech) | Publication verified; graded submission pending |
 
 All three repetitions agree in every cell. Totals: 42 protocol rejections, 147 modern version/suite connections, 21 valid-ECH acceptances, 21 non-ECH baselines, 21 stale-key recoveries. See the report for configured-settings, loopback, shared-engine and limited-sample caveats.
 
