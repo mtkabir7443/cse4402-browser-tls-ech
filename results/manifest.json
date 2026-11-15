@@ -1,0 +1,30 @@
+{
+  "artifact_kind": "cse4402-public-results-manifest",
+  "schema_version": 1,
+  "files": [
+    {
+      "file": "README.md",
+      "sha256": "17a8d57e4741b147e769961b2f7628d1a0807af838a1770900a5dbbd09a15e43"
+    },
+    {
+      "file": "comparison-data.json",
+      "sha256": "04eb5aaf114dee306f50a78d620249292ba2fe454209a24bc7f708bca06e7e05"
+    },
+    {
+      "file": "comparison.html",
+      "sha256": "4bada184d8440431c05df108b98cccaa69198722b6b0cbc13091cdabebae657b"
+    },
+    {
+      "file": "evidence-summary.json",
+      "sha256": "6255e4d987717e60224a75eed413ab5df95968ae1facf3a1adfe47f6c23f7d52"
+    },
+    {
+      "file": "results.csv",
+      "sha256": "33da7d30b881c7b2ec35a313e0dcfbe8aba4dcafe9a931d924d755bf3f313f76"
+    },
+    {
+      "file": "results.jsonl",
+      "sha256": "c3712382513163231f16c6481a1dc074e361c7fb353b740b18a2e7ac9184e8f4"
+    }
+  ]
+}

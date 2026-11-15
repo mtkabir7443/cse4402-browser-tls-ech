@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Browser TLS &amp; ECH Lab | CSE 4402</title>
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand-mark" aria-hidden="true">TLS</div>
+    <div><p class="eyebrow">CSE 4402 · Network Security</p><p class="brand-name">Browser Security Lab</p></div>
+    <span id="service-status" class="service-status" role="status">Connecting to lab</span>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div><p class="eyebrow">Controlled compatibility study</p><h1 id="page-title">Measure the connection.<br>Keep the evidence.</h1><p class="lede">Compare TLS versions, individual cipher suites, and Encrypted Client Hello across browser builds. Every attempt is registered, measured by this browser, and saved with its observed client IP.</p></div>
+      <aside class="study-card" aria-label="Planned experiment"><div><strong>12</strong><span>configurations</span></div><div><strong>7</strong><span>browser builds</span></div><div><strong>3</strong><span>repetitions</span></div><p>252 planned measurements · HTTPS over TCP</p></aside>
+    </section>
+    <div id="page-error" class="notice error" role="alert" hidden></div>
+    <section class="panel" aria-labelledby="run-heading">
+      <div class="section-heading"><div><p class="eyebrow">01 / Run a measurement</p><h2 id="run-heading">A single, recorded attempt</h2></div><span class="tag">Fresh profiles supplied by the runner</span></div>
+      <p class="muted">For the study, use the isolated-profile runner. Manual checks below use this page's current browser session and are labeled separately.</p>
+      <form id="run-form" class="run-form">
+        <label class="case-field">Configuration<select id="case-select" name="case_id" required disabled><option>Loading cases…</option></select></label>
+        <label>Repetition<input id="repetition" name="repetition" type="number" value="1" min="1" max="3" required></label>
+        <label>Batch ID<input id="batch-id" name="batch_id" type="text" value="manual" maxlength="100" autocomplete="off" required></label>
+        <button id="run-button" class="button primary" type="submit" disabled>Run this check <span aria-hidden="true">↗</span></button>
+      </form>
+      <p id="case-description" class="case-description"></p>
+      <div id="run-progress" class="notice" role="status" aria-live="polite" hidden></div>
+      <article id="run-result" class="run-result" aria-labelledby="result-heading" hidden>
+        <div class="result-title"><div><p class="eyebrow">Saved run</p><h3 id="result-heading">Measurement result</h3></div><span id="result-outcome" class="badge neutral"></span></div>
+        <dl id="result-fields" class="result-fields"></dl>
+        <p id="result-observation" class="muted"></p>
+        <details><summary>Full saved record</summary><pre id="result-json"></pre></details>
+      </article>
+    </section>
+    <section class="panel" aria-labelledby="comparison-heading">
+      <div class="section-heading"><div><p class="eyebrow">02 / Compare all browsers</p><h2 id="comparison-heading">The full picture, including failures</h2></div><button id="refresh-button" class="button secondary" type="button">Refresh results</button></div>
+      <div class="comparison-tools"><label>Results batch<select id="batch-filter"><option value="">All batches</option></select></label><p id="comparison-count" class="muted" aria-live="polite">Loading recorded runs…</p><nav class="exports" aria-label="Export results"><a id="jsonl-export" class="button secondary" href="/api/export?format=jsonl">Download JSONL</a><a id="csv-export" class="button secondary" href="/api/export?format=csv">Download CSV</a></nav></div>
+      <div class="legend" aria-label="Outcome interpretation"><span><i class="dot connected"></i>Connection observed</span><span><i class="dot rejected"></i>Diagnosed rejection</span><span><i class="dot inconclusive"></i>Inconclusive / needs review</span><span><i class="dot missing"></i>Not measured</span></div>
+      <p class="muted small">Cells retain the server's outcome classifications. A connection is not automatically a security pass; a non-ECH baseline is expected to have ECH off. Missing evidence stays visible.</p>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Browser and configuration comparison"><table id="comparison-table"><caption>Recorded outcomes by exact browser build and configuration</caption><thead></thead><tbody></tbody></table></div>
+      <details class="run-history"><summary>Recorded attempts and diagnostic evidence</summary><div class="table-scroll"><table id="history-table"><caption>Each stored attempt, including errors and inconclusive outcomes</caption><thead><tr><th scope="col">Run / time</th><th scope="col">Browser</th><th scope="col">Case / repeat</th><th scope="col">Server outcome</th><th scope="col">TLS / cipher / ECH</th><th scope="col">Client IP</th></tr></thead><tbody></tbody></table></div></details>
+    </section>
+    <section class="method-note" aria-labelledby="interpretation-heading"><h2 id="interpretation-heading">How to read the evidence</h2><div><p><strong>TLS and cipher suite</strong> come from the endpoint's handshake records. Browser errors alone cannot distinguish unsupported TLS from a DNS, certificate, or service problem.</p><p><strong>ECH accepted</strong> means the server accepted encrypted ClientHello. An ECH-shaped GREASE extension is not proof of acceptance. The stale case needs its initial connection and subsequent recovery examined together.</p><p><strong>Client IP</strong> is observed by the server. This local lab correctly reports loopback addresses. Raw logs are intended for the local study, separate from any public comparison.</p></div></section>
+  </main>
+  <footer><span>Mohammed Kabir · mtk21002 · Solo project</span><span>Controlled settings. Reproducible observations.</span></footer>
+</body>
+</html>

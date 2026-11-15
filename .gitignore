@@ -1,0 +1,22 @@
+# Generated or private experiment inputs and output
+.tools/
+.runtime/
+evidence/
+output/
+browsers.json
+node_modules/
+__pycache__/
+*.pyc
+*.exe
+*.dll
+*.key
+*.pem
+*.cer
+*.crt
+*.pfx
+*.p12
+*.log
+*netlog.json
+*.partial
+.env
+.env.*
