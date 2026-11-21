@@ -2,7 +2,7 @@
 
 **Mohammed Kabir | mtk21002 | CSE 4402, SEC001 | Solo project**
 
-Final report for December 18, 2026. Measurements taken November 15, 2026.
+Final report for December 18, 2026. Measurements taken November 15, 2026. [Explore the recorded results](https://mtkabir7443.github.io/cse4402-browser-tls-ech/).
 
 ## 1. Research question and findings
 
@@ -80,7 +80,7 @@ Each entry counts runs that produced the indicated outcome, out of three. R = pr
 
 **ECH.** All 21 valid-key runs reached the requested endpoint with ECH accepted. All 21 runs without an advertised key reached it without ECH. In all 21 stale-key runs the first observed attempt with configuration 16 lacked ECH acceptance. A later connection using configuration 17 delivered the requested HTTP probe with ECH accepted. A separate Chrome feasibility trace recorded a restart with the replacement configuration. Browsers can open parallel connections, so the number of handshake records cannot give an exact sequential retry count. [3]
 
-**A difference in the baseline.** I matched each E2 HTTP probe to its successful TLS handshake by connection address. Chrome 157 and 116, Firefox 160, Edge, Brave and Opera sent an ECH-shaped extension in 18/18 connections. Firefox 115 ESR omitted it in 3/3. The server recorded ECH acceptance as false in every case. The extension is consistent with GREASE. Its presence alone would have misclassified 18 connections as using ECH.
+**Did the browser actually use ECH?** I matched each E2 HTTP probe to the successful TLS handshake on the same connection. In the first repetition, Chrome 157 sent an ECH extension and Firefox 115 ESR omitted it. The server accepted ECH in neither connection. Across all 21 runs, six builds sent the extension every time (18/21), Firefox 115 ESR omitted it three times, and the server accepted ECH zero times (0/21). This pattern is consistent with GREASE. Counting the extension alone would give 18 false positives. [Inspect all 21 baseline runs](https://mtkabir7443.github.io/cse4402-browser-tls-ech/#ech-baseline).
 
 <!-- PAGEBREAK -->
 
@@ -92,9 +92,9 @@ The seven builds agreed on every classified endpoint outcome across all 84 brows
 
 **Evidence check.** The November 15 audit matched all 252 records to the retained evidence. On November 21 I checked the saved runs again. The installed Edge executable had updated from 157.0.4341.60 to 158.0.4370.33, so the check of its current path flagged all 36 Edge runs. The retained 157.0.4341.60 executable still matched the study's SHA-256. The recorded sessions and measured outcomes remained verifiable. A new experiment with Edge 158 would measure a different build.
 
-**Code and data.** [GitHub: mtkabir7443/cse4402-browser-tls-ech](https://github.com/mtkabir7443/cse4402-browser-tls-ech/tree/5e1e7350317645291c707c28d9433307d585eaa7). Download this revision and open `results/comparison.html` locally to filter by browser or case, inspect a run and export its record. The [setup and reproduction guide](https://github.com/mtkabir7443/cse4402-browser-tls-ech/blob/5e1e7350317645291c707c28d9433307d585eaa7/REPRODUCE.md) explains how to run the website and collect a new batch with controlled DNS and TLS. The live test endpoints run locally.
+**Code and data.** The [public dashboard](https://mtkabir7443.github.io/cse4402-browser-tls-ech/) lets readers filter the 252 recorded runs and inspect or download individual results. The [study code and data](https://github.com/mtkabir7443/cse4402-browser-tls-ech/tree/5e1e7350317645291c707c28d9433307d585eaa7) include an offline comparison. The [reproduction guide](https://github.com/mtkabir7443/cse4402-browser-tls-ech/blob/5e1e7350317645291c707c28d9433307d585eaa7/REPRODUCE.md) explains how to collect a new batch with the local DNS and TLS endpoints.
 
-From the repository root, run `node scripts/verify-public-results.cjs results`. It checks the 252 normalized observations, their coverage and their links to the published evidence summaries. The private logs additionally preserve the original handshakes. For the E2 comparison on page 3, the first Chrome 157 handshake and HTTP request are lines 2642-2643 of the study's server event log. Firefox 115 ESR's corresponding events are lines 9138 and 9141. The public summaries retain acceptance status and omit the extension-presence field.
+From the repository root, run `node scripts/verify-public-results.cjs results` to check all 252 observations against the published evidence summaries. The [21-run baseline dataset](https://mtkabir7443.github.io/cse4402-browser-tls-ech/ech-baseline.json), also in the ZIP as `examples/ech-baseline.json`, gives the run ID, build, repetition, extension presence and server acceptance. In the retained server log, lines 2642-2643 record the first Chrome 157 baseline handshake and HTTP probe. Lines 9138 and 9141 record the corresponding Firefox 115 ESR events.
 
 ## References
 

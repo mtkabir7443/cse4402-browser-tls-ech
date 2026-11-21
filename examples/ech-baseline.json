@@ -1,0 +1,170 @@
+[
+  {
+    "run_id": "study-20261115-chrome-current-E2-r1-49fa07f0",
+    "browser": "chrome-current",
+    "version": "157.0.8103.78",
+    "rep": 1,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-chrome-current-E2-r2-7fb52192",
+    "browser": "chrome-current",
+    "version": "157.0.8103.78",
+    "rep": 2,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-chrome-current-E2-r3-a6f6ce8d",
+    "browser": "chrome-current",
+    "version": "157.0.8103.78",
+    "rep": 3,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-firefox-current-E2-r1-40c07bac",
+    "browser": "firefox-current",
+    "version": "160.0",
+    "rep": 1,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-firefox-current-E2-r2-80fca9db",
+    "browser": "firefox-current",
+    "version": "160.0",
+    "rep": 2,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-firefox-current-E2-r3-c7d3db1b",
+    "browser": "firefox-current",
+    "version": "160.0",
+    "rep": 3,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-brave-current-E2-r1-f4094662",
+    "browser": "brave-current",
+    "version": "1.99.57",
+    "rep": 1,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-brave-current-E2-r2-eed5df44",
+    "browser": "brave-current",
+    "version": "1.99.57",
+    "rep": 2,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-brave-current-E2-r3-8101ba31",
+    "browser": "brave-current",
+    "version": "1.99.57",
+    "rep": 3,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-chrome-116-E2-r1-73d3c139",
+    "browser": "chrome-116",
+    "version": "116.0.5845.96",
+    "rep": 1,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-chrome-116-E2-r2-b380960f",
+    "browser": "chrome-116",
+    "version": "116.0.5845.96",
+    "rep": 2,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-chrome-116-E2-r3-c870d14d",
+    "browser": "chrome-116",
+    "version": "116.0.5845.96",
+    "rep": 3,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-firefox-115-E2-r1-94927c21",
+    "browser": "firefox-115",
+    "version": "115.0.3esr",
+    "rep": 1,
+    "extension_present": false,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-firefox-115-E2-r2-13726949",
+    "browser": "firefox-115",
+    "version": "115.0.3esr",
+    "rep": 2,
+    "extension_present": false,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-firefox-115-E2-r3-49d9095f",
+    "browser": "firefox-115",
+    "version": "115.0.3esr",
+    "rep": 3,
+    "extension_present": false,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-opera-current-E2-r1-380cf8d4",
+    "browser": "opera-current",
+    "version": "140.0.6074.18",
+    "rep": 1,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-opera-current-E2-r2-5545c557",
+    "browser": "opera-current",
+    "version": "140.0.6074.18",
+    "rep": 2,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-opera-current-E2-r3-3d5cf111",
+    "browser": "opera-current",
+    "version": "140.0.6074.18",
+    "rep": 3,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-edge-current-E2-r1-939e363c",
+    "browser": "edge-current",
+    "version": "157.0.4341.60",
+    "rep": 1,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-edge-current-E2-r2-93d29ae4",
+    "browser": "edge-current",
+    "version": "157.0.4341.60",
+    "rep": 2,
+    "extension_present": true,
+    "ech_accepted": false
+  },
+  {
+    "run_id": "study-20261115-edge-current-E2-r3-fad9537e",
+    "browser": "edge-current",
+    "version": "157.0.4341.60",
+    "rep": 3,
+    "extension_present": true,
+    "ech_accepted": false
+  }
+]
