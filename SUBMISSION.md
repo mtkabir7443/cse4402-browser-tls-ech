@@ -1,11 +1,11 @@
-# Delivery checklist — published code, not submitted
+# Project deliverables
 
 **Mohammed Kabir · NetID mtk21002 · CSE 4402 SEC001 · Solo project**
 
 | Milestone | Deliverable | Current state |
 |---|---|---|
-| November 22, 2026 at 11:59 p.m. EST | [Five-page project specifications and design](documents/CSE4402_TLS_ECH_Design_Nov22.pdf) | Revised November 21. HuskyCT submission pending. |
-| December 18, 2026 | `documents/CSE4402_TLS_ECH_Report.pdf` plus an accessible GitHub code link | Report prepared; GitHub repository published; HuskyCT submission pending |
+| November 22, 2026 at 11:59 p.m. EST | [Five-page project specifications and design](documents/CSE4402_TLS_ECH_Design_Nov22.pdf) | Five-page design, revised November 21. |
+| December 18, 2026 | [Four-page final report](documents/CSE4402_TLS_ECH_Report.pdf) and [GitHub code link](https://github.com/mtkabir7443/cse4402-browser-tls-ech) | Report reviewed and ready for submission. |
 
 The November assessment asks for the design document. The ZIP bundles the complete project for reference.
 
@@ -15,7 +15,7 @@ The November assessment asks for the design document. The ZIP bundles the comple
 
 Published November 15, 2026 with user authorization. The repository is publicly accessible; its default branch is `codex/prepare-submission`. A fresh download matched all 55 tracked files and passed verification of all 252 observations. The repository contains only intended source, documentation, PDFs and sanitized results. The parent coursework workspace, `.runtime`, `.tools`, private `evidence/`, browser profiles and raw logs are excluded.
 
-Use this code link with the final report. Before any later graded submission, check the exact final artifacts, run the result verifier and complete the final delivery review. **No email or HuskyCT submission has been performed.** Source publication does not deploy a public live demo.
+For the December milestone, use the final report and the GitHub code link above. The report links to the exact revision of the code and data used in the analysis.
 
 ## What the grader can review immediately
 

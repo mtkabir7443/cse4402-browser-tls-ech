@@ -10,9 +10,9 @@ Requirements source: [approved scope](scope.md), course handout and supplied pro
 | Persistent log identifies client IP | `results.go`, tests in `results_test.go`; fresh runs create `evidence/runs.jsonl`; packaged `results/results.jsonl` retains observed 127.0.0.1 | Complete |
 | Overall results for all browsers | Offline `results/comparison.html`, CSV/JSONL and report section 4 | Complete |
 | Local demo; external access preferred | `REPRODUCE.md`, `DEMO.md`, full source and controls | Local implementation verified; optional external hosting not deployed |
-| Written report with motivation, background, results, conclusions | `documents/CSE4402_TLS_ECH_Report.pdf`, `report.md`; all twelve measurement motivations included | Prepared |
+| Written report with motivation, results and conclusions | [Final report](documents/CSE4402_TLS_ECH_Report.pdf) and [source](report.md) cover all twelve measurements and compare all seven builds. | Reviewed |
 | Documentation and reproducibility | Setup/cleanup, pinned archive acquisition, fresh profiles, trust/policy handling, tests, result verification, limitations | Included; exact installed Edge build may change on a new host |
-| Project specifications and design, November 22 | [Five-page design](documents/CSE4402_TLS_ECH_Design_Nov22.pdf) and [source](design.md) cover goals, languages, libraries, modules, functions, class methods, and the experimental protocol | Revised November 21. Submission pending. |
+| Project specifications and design, November 22 | [Five-page design](documents/CSE4402_TLS_ECH_Design_Nov22.pdf) and [source](design.md) cover goals, languages, libraries, modules, functions, class methods, and the experimental protocol | Revised November 21. |
 | December 18 final report and GitHub code link | Report included; [public GitHub repository](https://github.com/mtkabir7443/cse4402-browser-tls-ech) | Publication verified; graded submission pending |
 
 All three repetitions agree in every cell. Totals: 42 protocol rejections, 147 modern version/suite connections, 21 valid-ECH acceptances, 21 non-ECH baselines, 21 stale-key recoveries. See the report for configured-settings, loopback, shared-engine and limited-sample caveats.

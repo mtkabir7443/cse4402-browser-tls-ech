@@ -35,4 +35,4 @@ The live program creates private append-only logs in `evidence/`; the packaged h
 
 [Requirements coverage](requirements-coverage.md) maps every professor requirement to code, evidence or documentation. [SUBMISSION.md](SUBMISSION.md) separates the two deadlines and remaining delivery actions. Local demo is accepted; external hosting is optional.
 
-The [GitHub repository](https://github.com/mtkabir7443/cse4402-browser-tls-ech) was first published November 15. The November 21 revision includes the five-page design for the November 22 milestone. HuskyCT submission remains pending.
+The [four-page final report](documents/CSE4402_TLS_ECH_Report.pdf) and its [Markdown source](report.md) accompany the five-page design. The report links to the revision used to verify the implementation and the 252 published observations.

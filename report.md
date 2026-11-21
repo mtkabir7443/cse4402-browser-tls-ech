@@ -2,13 +2,13 @@
 
 **Mohammed Kabir | mtk21002 | CSE 4402, SEC001 | Solo project**
 
-**Measurement report - November 15, 2026.** All 252 planned measurements are complete and verified: seven browser builds, 12 cases and three repetitions per case. This report presents the local study; code publication and graded submission remain separate.
+Final report for December 18, 2026. Measurements taken November 15, 2026.
 
-## 1. Purpose and research questions
+## 1. Research question and findings
 
-I built a local website to compare how seven browser builds handle controlled TLS versions, cipher suites, and Encrypted Client Hello (ECH). The website generates results, writes a persistent log containing the client's observed IP address, and presents an overall browser comparison. The experiment asks which configurations each build can negotiate, whether ECH is actually accepted, and whether a browser recovers from a stale ECH configuration.
+When a browser connects to an HTTPS site, which TLS versions and cipher suites can it negotiate, and when does it protect the requested hostname with Encrypted Client Hello (ECH)? I built a website that answers these questions from the handshake observed by the server. I tested seven Windows browser builds, including older releases of Chrome and Firefox, across 12 configurations with three repetitions each.
 
-TLS protects application traffic, but compatibility and privacy depend on the handshake. Rejecting obsolete protocols can be a desirable security result: RFC 8996 prohibits negotiating TLS 1.0 and 1.1. The TLS 1.2 and 1.3 cases provide supported-version comparisons. These are compatibility measurements under documented settings, not a ranking of overall browser security. [1–2]
+All seven rejected TLS 1.0 and 1.1, negotiated all five selected suites, and recovered when DNS advertised a stale ECH key. One difference emerged when DNS advertised no key. Six builds sent an ECH-shaped extension and Firefox 115 ESR omitted it. All 21 baseline connections completed without accepted ECH.
 
 ## 2. Measurements and motivation
 
@@ -18,54 +18,50 @@ TLS protects application traffic, but compatibility and privacy depend on the ha
 | V2 | TLS 1.1 only | Check whether the next deprecated version is also rejected. |
 | V3 | TLS 1.2 only | Establish a modern compatibility baseline. |
 | V4 | TLS 1.3 only | Check negotiation of the newer handshake protocol. |
-| C1 | TLS 1.2; ECDHE-RSA, AES-128-GCM/SHA-256 | Establish support for this exact authenticated-encryption combination. |
-| C2 | TLS 1.2; ECDHE-RSA, ChaCha20-Poly1305/SHA-256 | Change the encryption algorithm while retaining key exchange and authentication type. |
-| C3 | TLS 1.3; AES-128-GCM/SHA-256 | Check the TLS 1.3 mandatory-to-implement suite. |
-| C4 | TLS 1.3; AES-256-GCM/SHA-384 | Compare a different AES key size and hash. |
-| C5 | TLS 1.3; ChaCha20-Poly1305/SHA-256 | Compare a non-AES authenticated-encryption option. |
+| C1 | TLS 1.2, ECDHE-RSA, AES-128-GCM/SHA-256 | Establish support for this exact authenticated-encryption combination. |
+| C2 | TLS 1.2, ECDHE-RSA, ChaCha20-Poly1305/SHA-256 | Change the encryption algorithm while retaining key exchange and authentication type. |
+| C3 | TLS 1.3, AES-128-GCM/SHA-256 | Check the suite required by the base TLS 1.3 specification. |
+| C4 | TLS 1.3, AES-256-GCM/SHA-384 | Compare a different AES key size and hash. |
+| C5 | TLS 1.3, ChaCha20-Poly1305/SHA-256 | Compare a non-AES authenticated-encryption option. |
 | E1 | Valid advertised ECH configuration | Check actual acceptance of encrypted ClientHello information. |
-| E2 | No advertised ECH configuration | Establish the non-ECH baseline, including possible GREASE. |
-| E3 | Stale advertised ECH key; replacement available | Check rejection/recovery and the final connection outcome separately. |
+| E2 | No advertised ECH configuration | Test whether an encrypted connection succeeds without ECH. Inspect any ECH-shaped extension. |
+| E3 | Stale advertised ECH key, replacement available | Check rejection/recovery and the final connection outcome separately. |
 
-Each cipher endpoint allows exactly one listed suite. TLS 1.3 suite names describe encryption and hash choices separately from key exchange and certificate authentication; they are not interchangeable with TLS 1.2 suites. Canonical identifiers are preserved in the code and exports. [2]
+TLS version tests isolate which protocol a browser will negotiate. RFC 8996 prohibits negotiating TLS 1.0 or 1.1. A successful modern handshake can select only one cipher suite, so each cipher test offered exactly one. TLS 1.3 suite names specify authenticated encryption and a hash. Key exchange and certificate authentication are negotiated separately. [1, 2]
 
-ECH protects the inner ClientHello, including the requested hostname. GREASE extension presence does not prove acceptance. E3 deliberately advertises configuration 16 while the server accepts and offers configuration 17 for retry. This tests recovery from a controlled mismatch. [3]
+ECH encrypts the inner ClientHello, which carries the requested hostname. A browser can send a dummy extension (GREASE) to keep the protocol extensible. Server acceptance tells us whether the real inner ClientHello was used. [3]
 
 <!-- PAGEBREAK -->
 
-## 3. Browser selection and experimental method
-
-The frozen manifest records distribution, executable hash, product/version, and engine information. The seven selected Windows builds are:
+## 3. Browsers and experimental method
 
 | Table code | Browser build |
 |---|---|
 | Ch | Chrome for Testing 157.0.8103.78 |
 | FF | Firefox 160.0 |
 | Ed | Microsoft Edge 157.0.4341.60 |
-| Br | Brave 1.99.57; Chromium 157.0.8103.79 |
-| Op | Opera 140.0.6074.18; Chromium 157.0.8103.39 |
-| Ch16 | Chrome for Testing 116.0.5845.96 |
-| FF15 | Firefox 115.0.3 ESR |
+| Br | Brave 1.99.57, Chromium 157.0.8103.79 |
+| Op | Opera 140.0.6074.18, Chromium 157.0.8103.39 |
+| Ch116 | Chrome for Testing 116.0.5845.96 |
+| FF115 | Firefox 115.0.3 ESR |
 
-The target is **7 builds × 12 cases × 3 repetitions = 252 browser runs**. Three repeats check consistency in this setup; they do not estimate a population-wide failure rate. Historical releases are measured rather than assumed to lack ECH. Edge is checked against its pinned executable because its installed distribution can update.
+Five builds use Chromium. The two Firefox releases provide a second browser family. Three fresh runs of each case give 36 observations per build and 252 overall. Each ran headless on the same Windows 11 host (build 26300) with DNS over HTTPS (DoH), ECH enabled and normal certificate checks. These settings also applied to the two historical releases.
 
-**Architecture.** All services bind to loopback on Windows 11. Go 1.27.4 provides the control website, DNS-over-HTTPS (DoH), version-restricted TLS endpoints, TLS 1.2 suite controls, and ECH. Node 26.13.0 supplies the three persistent single-suite TLS 1.3 endpoints, because Go's public configuration does not expose TLS 1.3 suite restrictions. The Node runtime uses OpenSSL 3.5.9; independent command-line controls use OpenSSL 3.5.0. [5–6]
+<!-- ARCHITECTURE -->
 
-Controlled HTTPS DNS records supply the ECH configuration, service hostname, and nondefault port. Explicit service target names ensure browsers associate those records with the correct address. DNS answers are obtained through the configured local DoH endpoint rather than hosts-file substitutions. Certificate validation remains enabled; the server certificate issued by the local CA covers the control endpoint and the inner/outer test names. The renewed leaf expires January 9, 2027. [4]
+**Endpoints.** Go 1.27.4 served the website, local DoH, TLS version tests, TLS 1.2 suite tests and ECH. Go lets the server select suites through TLS 1.2. For C3-C5 I used Node.js 26.13.0 with OpenSSL 3.5.9 to restrict each TLS 1.3 endpoint to one suite. DNS HTTPS records identified the service target and port and, for E1 and E3, supplied the ECH configuration. The local certificate authority signed the certificate covering the control and test names. [4-7]
 
-**Run procedure.** First, independent positive and negative controls verify certificates, endpoint versions/suites, and ECH configuration. The runner then starts a fresh browser process/profile, configures DoH and trust, disables QUIC, and registers the case through the working control connection. The browser itself makes the measured HTTPS request. The control page records the outcome even if TLS fails before an HTTP request reaches the fixture. Cases are serialized, repeated three times, and compared against the endpoint's intended restriction.
+**One run.** The runner opened a fresh browser profile with QUIC disabled so the request used HTTPS over TCP. Before the browser contacted the test endpoint, the control page registered the run. The server appended the run ID and socket-observed client IP to its JSONL log. That left a record even if the handshake failed before HTTP. I ran one test at a time, matched its browser result to server events and displayed the result on the page. The dashboard also aggregates all builds and cases.
 
-Fresh profiles separate DNS/ECH and session state between repetitions while preserving retries within each run. Go disables session tickets. Node disables stateless tickets and declines stateful resumption; it can still issue tickets. Actual resumption status is logged and reviewed rather than inferred from configuration alone. Chromium uses temporary user-root trust; dedicated Firefox distributions use application-local policies. The documented cleanup procedure removes the project's temporary Windows trust after testing.
+**Controls.** An independent OpenSSL 3.5.0 client produced the expected results in 14 version and suite checks. Three Go controls exercised the valid, absent and stale ECH cases. The persistent Node endpoints passed three positive and three negative suite checks and a resumption test. These checks are separate from the 252 browser runs.
 
 <!-- PAGEBREAK -->
 
-## 4. Evidence and results
+## 4. Results across all seven builds
 
-**Observed dataset: 252 of 252 planned runs.** Batch `study-20261115` contains every browser/case/repetition cell exactly once. The independent raw-evidence audit passed with zero findings and no missing cells. All three repetitions agreed for every case. One earlier startup stopped before registration created no measurement; resuming preserved completed results.
+Each entry counts runs that produced the indicated outcome, out of three. R = protocol rejection, OK = intended version or suite negotiated, E = ECH accepted, N = connected without ECH, REC = recovered from stale ECH. Browser versions and column labels appear on page 2.
 
-`OK` = intended TLS connection; `R` = diagnosed protocol rejection; `E` = ECH accepted; `N` = connected without ECH; `REC` = stale-ECH recovery. Counts show observations out of three.
-
-| Case | Ch | FF | Ed | Br | Op | Ch16 | FF15 |
+| Case | Ch | FF | Ed | Br | Op | Ch116 | FF115 |
 |---|---|---|---|---|---|---|---|
 | V1 | R 3/3 | R 3/3 | R 3/3 | R 3/3 | R 3/3 | R 3/3 | R 3/3 |
 | V2 | R 3/3 | R 3/3 | R 3/3 | R 3/3 | R 3/3 | R 3/3 | R 3/3 |
@@ -80,43 +76,38 @@ Fresh profiles separate DNS/ECH and session state between repetitions while pres
 | E2 | N 3/3 | N 3/3 | N 3/3 | N 3/3 | N 3/3 | N 3/3 | N 3/3 |
 | E3 | REC 3/3 | REC 3/3 | REC 3/3 | REC 3/3 | REC 3/3 | REC 3/3 | REC 3/3 |
 
-**Versions and suites.** All seven builds rejected TLS 1.0 and 1.1 (42 rejections). TLS 1.2, TLS 1.3 and the five restricted-suite cases produced 147 connections with the intended parameters. No measured cell was inconclusive or inconsistent.
+**Versions and suites.** The 42 TLS 1.0/1.1 attempts ended in explicit protocol rejection before HTTP. All 147 attempts across V3-V4 and C1-C5 negotiated the intended version or suite. For example, all 21 TLS 1.3 version-only connections (V4) selected AES-128-GCM/SHA-256. All 21 C4 connections selected AES-256-GCM/SHA-384 when it was the sole option. V4 alone would have missed that capability.
 
-**ECH.** Valid advertisements produced 21 accepted ECH requests; the 21 baseline requests connected without accepted ECH. All 21 stale-key runs recovered to an accepted ECH request. The wire observer distinguishes the initial configuration 16 from the subsequent accepted configuration 17. Chrome's selected NetLog trace explicitly records a restart with the replacement list. Parallel connection jobs are not multiple sequential retries of one connection. An ECH-shaped extension alone is insufficient evidence.
+**ECH.** All 21 valid-key runs reached the requested endpoint with ECH accepted. All 21 runs without an advertised key reached it without ECH. In all 21 stale-key runs the first observed attempt with configuration 16 lacked ECH acceptance. A later connection using configuration 17 delivered the requested HTTP probe with ECH accepted. A separate Chrome feasibility trace recorded a restart with the replacement configuration. Browsers can open parallel connections, so the number of handshake records cannot give an exact sequential retry count. [3]
 
-**Controls and interpretation.** Fourteen OpenSSL checks, three independent Go ECH controls and the Node suite/resumption checks passed; these are separate from browser runs. Registration and observed-IP logging precede testing, including pre-HTTP failures. Server evidence establishes negotiation; a generic fetch error cannot establish unsupported TLS. The export retains browser metadata, raw event references and every repetition.
+**A difference in the baseline.** I matched each E2 HTTP probe to its successful TLS handshake by connection address. Chrome 157 and 116, Firefox 160, Edge, Brave and Opera sent an ECH-shaped extension in 18/18 connections. Firefox 115 ESR omitted it in 3/3. The server recorded ECH acceptance as false in every case. The extension is consistent with GREASE. Its presence alone would have misclassified 18 connections as using ECH.
+
 <!-- PAGEBREAK -->
 
-## 5. Limitations and conclusions
+## 5. Interpretation and reproducibility
 
-This study measures explicitly configured DoH/ECH and trust settings. It does not establish behavior under each browser's untouched consumer defaults. Measurements use pinned builds in headless mode on one Windows machine; different platforms, releases, policies, or interactive modes may differ. Chrome is the Chrome for Testing distribution. Several products share Chromium. Edge reports its exact Edg product/version; its underlying Chromium patch version remains unknown.
+The browser could load the site in all three ECH conditions, yet the site observed three different sequences: immediate ECH acceptance, an ordinary TLS connection, or recovery to ECH after rejection of a stale key. A page-load test alone would have reported success in all three. Likewise, a failed fetch alone cannot diagnose protocol rejection. For example, Chrome 157's first V1 run reported a fetch error, and the matched TLS server event identified an unsupported version before any HTTP probe arrived.
 
-The endpoints are local and use a private CA. The recorded client address is correctly 127.0.0.1; the experiment does not measure public-path latency, resolver diversity, or deployment reachability. Three repetitions can expose inconsistent local behavior but support no broad statistical reliability claim. ECH acceptance does not hide every source of metadata, such as the destination IP. No performance ranking, vulnerability discovery, or complete browser-security evaluation is claimed.
+The seven builds agreed on every classified endpoint outcome across all 84 browser/case combinations. The E2 wire evidence shows why that agreement can coexist with different ClientHello behavior. It establishes configured capability on one machine. Fresh profiles, explicitly enabled ECH, local DNS and a trusted local certificate authority limit what these results say about default installations and public networks. The server saw the loopback address 127.0.0.1 for all 252 runs. Three repetitions establish local consistency. They cannot estimate a population failure rate. ECH still exposes the destination IP. [3]
 
-HTTP/3, broad certificate/revocation-validation experiments, and a separate DNSSEC suite remain outside the approved scope. Valid certificates and DNS are prerequisites. External hosting is a preferred optional extension; the professor accepted a local demonstration, and this version has not been publicly deployed.
+**Evidence check.** The November 15 audit matched all 252 records to the retained evidence. On November 21 I checked the saved runs again. The installed Edge executable had updated from 157.0.4341.60 to 158.0.4370.33, so the check of its current path flagged all 36 Edge runs. The retained 157.0.4341.60 executable still matched the study's SHA-256. The recorded sessions and measured outcomes remained verifiable. A new experiment with Edge 158 would measure a different build.
 
-**Conclusions for the measured builds.** All seven configured builds consistently rejected deprecated TLS, negotiated every tested suite, accepted valid ECH and recovered from stale ECH. Older Chrome and Firefox also accepted ECH when explicitly enabled. No browser differed on these measured outcomes; the similarities do not imply equivalent overall security or default settings.
+**Code and data.** [GitHub: mtkabir7443/cse4402-browser-tls-ech](https://github.com/mtkabir7443/cse4402-browser-tls-ech/tree/5e1e7350317645291c707c28d9433307d585eaa7). Download this revision and open `results/comparison.html` locally to filter by browser or case, inspect a run and export its record. The [setup and reproduction guide](https://github.com/mtkabir7443/cse4402-browser-tls-ech/blob/5e1e7350317645291c707c28d9433307d585eaa7/REPRODUCE.md) explains how to run the website and collect a new batch with controlled DNS and TLS. The live test endpoints run locally.
 
-## 6. Reproduction and delivery
-
-The repository's `README.md` documents pinned tools/browsers, trust, fixture controls, the runner, exports and cleanup. The runner bounds startup and rechecks its lease before registration, retaining a 180-second reserve. Resuming preserves completed cells. Both Edge policy leases restored the original settings. The manifest, journals and per-run records retain provenance and evidence.
-
-The website provides individual results and an aggregate comparison. A standalone HTML export supports viewing and CSV/JSONL downloads after services stop. Missing, duplicate, or version-mismatched coverage must be resolved before accepting the final comparison. Raw logs/exports include client IPs; private keys, profiles, and sensitive raw diagnostics are kept separate from public artifacts.
-
-Before final submission, publish the intended code on GitHub and perform the final delivery review. The November 22 design document is separate from the December 18 code/report deadline. The local comparison is complete; no code publication, external hosting, email or LMS submission has occurred.
+From the repository root, run `node scripts/verify-public-results.cjs results`. It checks the 252 normalized observations, their coverage and their links to the published evidence summaries. The private logs additionally preserve the original handshakes. For the E2 comparison on page 3, the first Chrome 157 handshake and HTTP request are lines 2642-2643 of the study's server event log. Firefox 115 ESR's corresponding events are lines 9138 and 9141. The public summaries retain acceptance status and omit the extension-presence field.
 
 ## References
 
-[1] IETF. [RFC 8996: Deprecating TLS 1.0 and TLS 1.1](https://www.rfc-editor.org/rfc/rfc8996.html), §§4–5.
+[1] IETF. [RFC 8996, Deprecating TLS 1.0 and TLS 1.1](https://www.rfc-editor.org/rfc/rfc8996.html), §§4-5.
 
-[2] IETF. [RFC 8446: The Transport Layer Security Protocol Version 1.3](https://www.rfc-editor.org/rfc/rfc8446.html), §9.1 and Appendix B.4.
+[2] IETF. [RFC 8446, The Transport Layer Security Protocol Version 1.3](https://www.rfc-editor.org/rfc/rfc8446.html), §9.1 and Appendix B.4.
 
-[3] IETF. [RFC 9849: TLS Encrypted Client Hello](https://www.rfc-editor.org/rfc/rfc9849.html), client/server processing, retry and GREASE behavior.
+[3] IETF. [RFC 9849, TLS Encrypted Client Hello](https://www.rfc-editor.org/rfc/rfc9849.html), §§6.1.6 and 6.2.
 
-[4] IETF. [RFC 9460: Service Binding and Parameter Specification via the DNS](https://www.rfc-editor.org/rfc/rfc9460.html), HTTPS records and service target names.
+[4] IETF. [RFC 9460, Service Binding and Parameter Specification via the DNS](https://www.rfc-editor.org/rfc/rfc9460.html).
 
-[5] Go. [crypto/tls documentation](https://pkg.go.dev/crypto/tls), configuration, ECH and connection state.
+[5] Go. [crypto/tls configuration and connection state](https://pkg.go.dev/crypto/tls#Config).
 
-[6] Node.js. [TLS documentation](https://nodejs.org/api/tls.html), cipher-suite configuration, session resumption and connection events.
+[6] Node.js. [TLS cipher-suite configuration and session resumption](https://nodejs.org/api/tls.html).
 
-Requirements source: project handout and Professor Herzberg's correspondence, recorded in `scope.md`. Local evidence includes the fixture/ECH controls, `study-audit.json`, the comparison export and retained browser/server logs. All 252 planned measurements are verified; publication and submission remain pending.
+[7] IETF. [RFC 9848, Bootstrapping TLS Encrypted ClientHello with DNS Service Bindings](https://www.rfc-editor.org/rfc/rfc9848.html).
