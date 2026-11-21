@@ -8,7 +8,7 @@ Mohammed Kabir | NetID mtk21002 | CSE 4402, SEC001 | Solo project
 
 This website measures browser behavior at controlled HTTPS endpoints. It separates the ability to establish a connection from the security properties actually negotiated. The study asks which TLS versions and selected cipher suites work, whether browsers use a valid Encrypted Client Hello (ECH) configuration, and how they recover when the advertised ECH key is stale.
 
-Professor Herzberg approved a solo TLS/ECH project with additional browsers, including older Chrome and Firefox. Required outputs are a result webpage, a persistent log identifying the client's IP, an overall browser comparison, and a written report that motivates the measurements and discusses results. A local demonstration is acceptable; external hosting is optional. The 12 configurations, seven pinned builds and three fresh-state repetitions produce **252 measurements, all completed and verified locally on November 15**.
+Professor Herzberg approved a solo study with several browsers, including older Chrome and Firefox. The local testbed displays each result and logs the client's IP. The [public dashboard](https://mtkabir7443.github.io/cse4402-browser-tls-ech/) compares **252 measurements** completed and verified locally on November 15. Batch `study-20261115` covers seven builds, 12 configurations and three fresh-state repetitions. The written report explains the motivation and findings.
 
 ## 2. Measurements and interpretation
 
@@ -93,7 +93,9 @@ Explicit DNS service TargetNames corrected Chrome's association of HTTPS records
 
 Certificate verification stays enabled. Firefox uses project-local CA policy; Chromium uses temporary Windows user-root trust with explicit removal during cleanup. The renewed leaf covers the December deadline. Both Edge DNS policy leases restored the original settings. Startup and registration guards retain a 180-second lease reserve. Opera uses its custom-DoH preference.
 
-**Analysis rule.** Use the browser build, case ID and repetition as the unique observation key. Compare the three outcomes for each of the 84 build-case pairs, then compare current and historical builds within each case. Flag missing slots, duplicates, build mismatches, session resumption and disagreements. For example, one C4 success requires TLS 1.3, `TLS_AES_256_GCM_SHA384`, a fresh handshake and the matching HTTP probe. Batch `study-20261115` contains all 252 planned observations.
+**Analysis rule.** Key each observation by build, case and repetition. Compare repeats across all 84 build-case pairs and compare builds within each case. Flag missing slots, duplicates, build mismatches, resumption and disagreements. C4 requires a fresh TLS 1.3 handshake with `TLS_AES_256_GCM_SHA384` and the matching HTTP probe.
+
+**Worked example (E2).** DNS advertised no ECH configuration. Match each HTTP probe to the successful handshake on the same connection. Chrome 157 sent an ECH extension on its first run. Firefox 115 ESR omitted it. Both connections succeeded without ECH. Across seven builds, the extension appeared in 18 of 21 runs, Firefox 115 ESR omitted it in all three, and the server accepted ECH in 0 of 21. This pattern is consistent with GREASE. [Inspect the 21 recorded runs](https://mtkabir7443.github.io/cse4402-browser-tls-ech/#ech-baseline).
 
 <!-- PAGEBREAK -->
 
@@ -105,13 +107,13 @@ Certificate verification stays enabled. Firefox uses project-local CA policy; Ch
 | Webpage produces results | The live dashboard registers and executes a browser request, then displays the server-normalized result. Verify both a connection and an intentional TLS rejection. |
 | Results also enter a log with client IP | evidence/runs.jsonl retains registration and completion. Handshake/HTTP logs supply protocol evidence. Check persistence, IP origin and visible log failures. |
 | Overall results for all tested browsers | A complete matrix, per-run view, filters and CSV/JSONL exports. A self-contained comparison page remains usable after the lab stops. |
-| Local demo; external access preferred | Reproduce the documented local setup and cleanup. External hosting remains optional and must preserve DNS/TLS test conditions and protect private logs. |
+| Local demo and public access | The controlled DNS and TLS endpoints run locally. GitHub Pages displays the recorded comparison and the [per-run ECH dataset](https://mtkabir7443.github.io/cse4402-browser-tls-ech/ech-baseline.json). The ZIP includes the same data in `examples/ech-baseline.json`. |
 | Written report with motivation, results and conclusions | Explain each measurement family, identify the dataset and methods, compare all builds and state limitations. A slide deck does not replace the report. |
 | Good documentation and complete coverage | Source, pinned browser manifest, fixture checks, runner, result exports, setup/cleanup commands and requirement-by-requirement review. |
 
 **November 22 milestone.** This specification documents goals, source modules, functions, classes, methods and the experimental protocol. The design is due Sunday, November 22, 2026, at 11:59 PM EST.
 
-**December 18 milestone.** The written final report introduces and motivates each measurement, presents the comparison and draws conclusions. The [published implementation and dataset](https://github.com/mtkabir7443/cse4402-browser-tls-ech/tree/06ab22fcc8709bdeab80b728bf81704032ea065c) include the source, reproduction instructions and sanitized per-run results. The raw diagnostics and cryptographic keys remain in the local research workspace.
+**December 18 milestone.** The written final report introduces and motivates each measurement, presents the comparison and draws conclusions. The [published implementation and dataset](https://github.com/mtkabir7443/cse4402-browser-tls-ech/tree/136afa761880e79b340a621cf99b2ff8f49aa6cd) include the source, reproduction instructions and sanitized per-run results. The raw diagnostics and cryptographic keys remain in the local research workspace.
 
 The main limitations are a single Windows host, loopback networking, headless automation, explicitly configured DoH/ECH, a small number of builds and only three repetitions. Similar outcomes across Chromium products are legitimate results. The study measures compatibility under documented conditions; it does not rank overall browser security or estimate population-level failure probabilities.
 
