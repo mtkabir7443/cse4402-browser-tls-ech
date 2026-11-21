@@ -35,4 +35,4 @@ The live program creates private append-only logs in `evidence/`; the packaged h
 
 [Requirements coverage](requirements-coverage.md) maps every professor requirement to code, evidence or documentation. [SUBMISSION.md](SUBMISSION.md) separates the two deadlines and remaining delivery actions. Local demo is accepted; external hosting is optional.
 
-**Published November 15, 2026:** [GitHub repository](https://github.com/mtkabir7443/cse4402-browser-tls-ech). The source, documents and sanitized results were downloaded from GitHub and verified against the file manifest. HuskyCT submission remains pending. The unchanged design/report record the study's earlier preparation status; this note supplies the subsequent publication status. Publishing source on GitHub does not deploy the live TLS/DNS test services.
+The [GitHub repository](https://github.com/mtkabir7443/cse4402-browser-tls-ech) was first published November 15. The November 21 revision includes the five-page design for the November 22 milestone. HuskyCT submission remains pending.

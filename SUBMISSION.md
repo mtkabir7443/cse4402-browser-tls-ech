@@ -4,10 +4,10 @@
 
 | Milestone | Deliverable | Current state |
 |---|---|---|
-| November 22, 2026 | `documents/CSE4402_TLS_ECH_Design_Nov22.pdf` | Ready for the design/methods milestone; not submitted |
+| November 22, 2026 at 11:59 p.m. EST | [Five-page project specifications and design](documents/CSE4402_TLS_ECH_Design_Nov22.pdf) | Revised November 21. HuskyCT submission pending. |
 | December 18, 2026 | `documents/CSE4402_TLS_ECH_Report.pdf` plus an accessible GitHub code link | Report prepared; GitHub repository published; HuskyCT submission pending |
 
-The ZIP is a convenient complete package, not a substitute for whichever upload fields the course uses. No exact time or upload format was prescribed in the supplied project instructions. Verify the current LMS destination before any future submission.
+The November assessment asks for the design document. The ZIP bundles the complete project for reference.
 
 ## Published GitHub repository
 

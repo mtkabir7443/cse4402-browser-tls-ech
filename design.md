@@ -1,8 +1,8 @@
 # Browser TLS and ECH Compatibility Testbed
 
-**Design and methods - November 22, 2026**
+**Project specifications and design | November 21, 2026**
 
-Mohammed Kabir | NetID: mtk21002 | CSE 4402 | Solo project
+Mohammed Kabir | NetID mtk21002 | CSE 4402, SEC001 | Solo project
 
 ## 1. Purpose and approved scope
 
@@ -17,7 +17,7 @@ Professor Herzberg approved a solo TLS/ECH project with additional browsers, inc
 | V1-V4 | TLS 1.0, 1.1, 1.2 and 1.3, each separately | Does the connection succeed, and which version is negotiated? Diagnosed rejection of obsolete TLS is an expected security result. |
 | C1 | TLS 1.2, ECDHE-RSA with AES-128-GCM/SHA-256 | Can this exact suite work with the trusted RSA certificate? |
 | C2 | TLS 1.2, ECDHE-RSA with ChaCha20-Poly1305/SHA-256 | Compare another authenticated-encryption algorithm under the same version and certificate conditions. |
-| C3-C5 | TLS 1.3, AES-128-GCM, AES-256-GCM and ChaCha20-Poly1305, each separately | Does the browser negotiate the sole permitted suite? These suite names do not specify authentication or key exchange. |
+| C3-C5 | TLS 1.3, one suite per endpoint: AES-128-GCM/SHA-256 (C3), AES-256-GCM/SHA-384 (C4), ChaCha20-Poly1305/SHA-256 (C5) | Does the browser negotiate the sole permitted suite? The server records the version and suite from the connection. |
 | E1 | Current ECH configuration in the HTTPS DNS record | Does the server accept genuine ECH and deliver the requested page? |
 | E2 | No advertised ECH configuration | Establish the baseline. An ECH-shaped GREASE extension does not establish ECH acceptance. |
 | E3 | Stale advertised ECH key; server offers its current replacement | Observe initial non-acceptance, retry evidence and the final connection/ECH outcome separately. |
@@ -26,11 +26,29 @@ The implementation retains canonical suite names in its configuration and export
 
 <!-- PAGEBREAK -->
 
-## 3. Architecture and controls
+## 3. Software specification
+
+The implementation uses Go 1.27.4, Node.js 26.13.0, browser JavaScript, HTML/CSS and PowerShell 7. Go's standard libraries provide TLS, certificate handling, HTTP and JSON. Node uses built-in networking, cryptography, filesystem and child-process modules. Node's OpenSSL 3.5.9 implementation can restrict TLS 1.3 cipher suites individually. Go's public cipher-suite setting covers TLS 1.2 and earlier. Independent fixture checks use the OpenSSL 3.5.0 command-line client.
+
+| Component and source | Functions, methods and data flow |
+| --- | --- |
+| TLS and DNS (Go) in `main.go` | `setup()` creates the lab CA, certificate and ECH material. `serve()` configures listeners. `dnsResponse()` builds address and HTTPS records with service target, port and ECH information. `probeHandler()` records the HTTP run ID and negotiated state. |
+| Handshake observation (Go) in `main.go` and `clienthello.go` | `auditedListener.pump()` records TLS outcomes. `helloConn.Read()`, `parseClientHello()` and `decodeHello()` extract the versions and ECH configuration ID offered by the browser. `stateFields()` reads actual acceptance and negotiated parameters from the TLS connection. |
+| Single-suite fixtures (Node) in `scripts/suite-fixtures.cjs` | `createFixtureServers()` uses `node:https` and the `FIXTURES` definitions to start one TLS 1.3 listener per suite. The `secureConnection` and `tlsClientError` handlers log success or failure. Successful HTTP probes include the run ID. |
+| Browser controllers (Node) in `scripts/run-matrix.cjs` | `main()` selects the batch and repetitions. `runOne()` checks the executable hash, opens a fresh profile and invokes the page. The `CDP` class uses `connect()`, `send()` and `close()` to control Chromium. The `Marionette` class uses `connect()`, `send()`, `evaluate()` and `close()` for Firefox. `MarionetteFrames.push()` assembles messages. |
+| Website (HTML/CSS/JS) in `web/index.html`, `web/style.css`, `web/app.js` | `window.labRun()` registers a case, calls the browser Fetch API against the test endpoint and posts the browser outcome. `renderResult()` displays the individual record. `refreshResults()` retrieves records for `renderComparison()`. |
+| Journal and API (Go) in `results.go` | `measurementCases()` specifies endpoint restrictions. Methods on the `resultsStore` struct handle registration (`runs()`), completion (`run()`), persistent writes (`appendRun()`) and replay (`loadRuns()`). `classifyRun()` matches evidence. `buildResultSummary()` aggregates records. |
+| Analysis and export (Node) in `scripts/` | In `export-results.cjs`, `analyzeCoverage()` checks the matrix and `renderReport()` creates offline HTML. `auditStudy()` in `audit-study.cjs` checks private evidence. `prepareData()` in `prepare-public-results.cjs` selects shareable fields. `verifyDirectory()` in `verify-public-results.cjs` checks the public package. |
+
+**Operational tools.** `Get-Browsers.ps1` acquires and inventories builds. `Start-Lab.ps1` and `Start-SuiteFixtures.ps1` launch the services. `Run-EdgeMatrix.ps1` temporarily configures and restores Edge's lab DNS policy. Stop scripts close the services and remove temporary Windows lab trust.
+
+<!-- PAGEBREAK -->
+
+## 4. Architecture and experimental protocol
 
 <!-- ARCHITECTURE -->
 
-Go serves the control page, private DNS-over-HTTPS (DoH), TLS-version fixtures, TLS 1.2 suite fixtures and ECH. Node's OpenSSL-backed TLS server supplies three persistent single-suite TLS 1.3 endpoints because Go does not expose TLS 1.3 suite selection through its public configuration. All listeners bind to loopback. HTTPS DNS records name the explicit service hostname, including when the question uses a non-default-port prefix. [1-3]
+All listeners bind to loopback. Go serves the control page and DNS-over-HTTPS (DoH) on port 8443, V1-V4 on 9440-9443 and C1-C2 on 9445-9446. Node serves C3-C5 on 9451-9453. E1-E3 share 9443 and use distinct hostnames. HTTPS DNS records supply explicit service target names for nondefault ports. [1-3]
 
 1. **Check the fixtures.** Independent Go/OpenSSL clients verify certificate chain, names and validity, correct protocol/suite negotiation, incompatible-suite rejection and current/stale ECH behavior. These controls are separate from browser measurements.
 
@@ -38,19 +56,19 @@ Go serves the control page, private DNS-over-HTTPS (DoH), TLS-version fixtures, 
 
 3. **Register before testing.** Through the working control page, persist the run ID, build, distribution, OS, settings, case and repetition. The server records the socket-observed client IP and certificate fingerprint. It permits one outstanding run per client IP.
 
-4. **Measure from the browser.** The page fetches the selected endpoint, then completes the registered run even if that request fails. Server TLS/HTTP records establish negotiation. The runner does not substitute a backend TLS client for the browser.
+4. **Measure from the browser.** After registration at `/api/runs`, the browser fetches `/probe?run=<id>` on the restricted endpoint. The page posts to `/api/runs/<id>/complete` on the working control connection even if the measured TLS request failed. Server TLS/HTTP records establish negotiation.
 
-5. **Classify with evidence.** A generic JavaScript fetch error is inconclusive. Explicit correlated protocol/cipher errors establish rejection; certificate, DNS, setup and unexplained timeout failures remain distinct. Successful requests carry the run ID. Pre-HTTP evidence is limited by endpoint, IP and the registered time window.
+5. **Classify with evidence.** Successful probe requests carry the run ID. Before HTTP, match handshake events by endpoint, observed IP and the registered time window. An explicit protocol or cipher incompatibility supports rejection. A correlated certificate error can identify an infrastructure failure. If a fetch fails or times out without matching server evidence, retain the browser symptom and leave the cause inconclusive.
 
 6. **Repeat, retain and compare.** Record all three outcomes, including failed or inconclusive ones. Completed cells are preserved on resume. Export the full browser-by-case comparison and per-run JSONL/CSV. Fresh processes prevent cross-run reuse; server logs independently record resumption. Retries within E3 remain allowed.
 
-Go disables session tickets. Node declines resumption lookups and retains no resumable session state, although TLS 1.3 stateful ticket messages may still be issued. The fixture control verifies that a presented session is not resumed. No zero-ticket claim is required.
+Go disables session tickets. Node may issue TLS 1.3 stateful tickets and declines resumption lookups. The fixture control presents a prior session and checks the server's resumption flag on the new connection.
 
-The JSONL journal is append-only, synchronized before acknowledgement and checked on reopening. Log-write failures are reported to the page. Client IP comes from the connection rather than a client-supplied field. The correct local value is 127.0.0.1; this experiment does not pretend to observe an external client address.
+The server appends registration and completion events to the JSONL journal, synchronizes writes before acknowledgment and checks the journal on reopening. It reports write failures to the page. Both the browser and server run on the same host, so the client IP observed at the socket is 127.0.0.1.
 
 <!-- PAGEBREAK -->
 
-## 4. Browser selection and verified results
+## 5. Browser selection, analysis and verified results
 
 | Browser | Pinned build and distribution |
 | --- | --- |
@@ -75,11 +93,11 @@ Explicit DNS service TargetNames corrected Chrome's association of HTTPS records
 
 Certificate verification stays enabled. Firefox uses project-local CA policy; Chromium uses temporary Windows user-root trust with explicit removal during cleanup. The renewed leaf covers the December deadline. Both Edge DNS policy leases restored the original settings. Startup and registration guards retain a 180-second lease reserve. Opera uses its custom-DoH preference.
 
-Batch `study-20261115` has 252 verified runs and zero audit findings. The comparison export and written report retain the results and limitations; publication and submission remain pending.
+**Analysis rule.** Use the browser build, case ID and repetition as the unique observation key. Compare the three outcomes for each of the 84 build-case pairs, then compare current and historical builds within each case. Flag missing slots, duplicates, build mismatches, session resumption and disagreements. For example, one C4 success requires TLS 1.3, `TLS_AES_256_GCM_SHA384`, a fresh handshake and the matching HTTP probe. Batch `study-20261115` contains all 252 planned observations.
 
 <!-- PAGEBREAK -->
 
-## 5. Deliverables and acceptance
+## 6. Deliverables and acceptance
 
 | Professor's requirement | Implementation and acceptance evidence |
 | --- | --- |
@@ -91,9 +109,9 @@ Batch `study-20261115` has 252 verified runs and zero audit findings. The compar
 | Written report with motivation, results and conclusions | Explain each measurement family, identify the dataset and methods, compare all builds and state limitations. A slide deck does not replace the report. |
 | Good documentation and complete coverage | Source, pinned browser manifest, fixture checks, runner, result exports, setup/cleanup commands and requirement-by-requirement review. |
 
-**November 22 design deliverable:** this design/methods document, with the implemented architecture, controls and completed study evidence. It is prepared locally; submission is a separate action.
+**November 22 milestone.** This specification documents goals, source modules, functions, classes, methods and the experimental protocol. The design is due Sunday, November 22, 2026, at 11:59 PM EST.
 
-**December 18 final deliverable:** the written report and GitHub code link, supported by the measured comparison and reproducible setup. Before submission, rerun appropriate controls, check exact artifact hashes and complete the three-lens coursework review. Publish only the intended source/results package; private keys, browser profiles and raw network logs stay outside the public code repository.
+**December 18 milestone.** The written final report introduces and motivates each measurement, presents the comparison and draws conclusions. The [published implementation and dataset](https://github.com/mtkabir7443/cse4402-browser-tls-ech/tree/06ab22fcc8709bdeab80b728bf81704032ea065c) include the source, reproduction instructions and sanitized per-run results. The raw diagnostics and cryptographic keys remain in the local research workspace.
 
 The main limitations are a single Windows host, loopback networking, headless automation, explicitly configured DoH/ECH, a small number of builds and only three repetitions. Similar outcomes across Chromium products are legitimate results. The study measures compatibility under documented conditions; it does not rank overall browser security or estimate population-level failure probabilities.
 
@@ -109,4 +127,4 @@ The main limitations are a single Windows host, loopback networking, headless au
 
 [5] Microsoft, managed DoH policy: https://learn.microsoft.com/en-us/deployedge/microsoft-edge-policies/dnsoverhttpsmode
 
-Requirements source: Professor Herzberg's correspondence and the project handout supplied in this course chat. Exact report length and historical builds were not prescribed. The grading criterion is conditional; this document does not claim an awarded grade.
+Project requirements follow the course handout, Professor Herzberg's project correspondence and the November 21 HuskyCT specification.

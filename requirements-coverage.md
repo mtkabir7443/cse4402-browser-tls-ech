@@ -12,7 +12,7 @@ Requirements source: [approved scope](scope.md), course handout and supplied pro
 | Local demo; external access preferred | `REPRODUCE.md`, `DEMO.md`, full source and controls | Local implementation verified; optional external hosting not deployed |
 | Written report with motivation, background, results, conclusions | `documents/CSE4402_TLS_ECH_Report.pdf`, `report.md`; all twelve measurement motivations included | Prepared |
 | Documentation and reproducibility | Setup/cleanup, pinned archive acquisition, fresh profiles, trust/policy handling, tests, result verification, limitations | Included; exact installed Edge build may change on a new host |
-| November 22 design/methods | `documents/CSE4402_TLS_ECH_Design_Nov22.pdf`, `design.md` | Prepared, not submitted |
+| Project specifications and design, November 22 | [Five-page design](documents/CSE4402_TLS_ECH_Design_Nov22.pdf) and [source](design.md) cover goals, languages, libraries, modules, functions, class methods, and the experimental protocol | Revised November 21. Submission pending. |
 | December 18 final report and GitHub code link | Report included; [public GitHub repository](https://github.com/mtkabir7443/cse4402-browser-tls-ech) | Publication verified; graded submission pending |
 
 All three repetitions agree in every cell. Totals: 42 protocol rejections, 147 modern version/suite connections, 21 valid-ECH acceptances, 21 non-ECH baselines, 21 stale-key recoveries. See the report for configured-settings, loopback, shared-engine and limited-sample caveats.

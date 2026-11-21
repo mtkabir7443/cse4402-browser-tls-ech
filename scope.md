@@ -6,6 +6,6 @@ The approved expansion includes several additional browsers, specifically older 
 
 The implemented experiment uses seven builds, twelve controlled configurations, and three fresh-state repetitions: 252 actual measurements. These counts were the project's chosen operational scope, not separately prescribed instructor counts. TLS version, suite and ECH configurations are specified in the design and report. HTTP/3, broad certificate/revocation tests and a separate DNSSEC suite are outside this approved scope.
 
-The November 22 milestone is a short design/methods document. December 18 requires the final written report and a GitHub code link. A specific submission time, report length and numerical rubric breakdown were not supplied. Both documents are prepared. The [GitHub repository](https://github.com/mtkabir7443/cse4402-browser-tls-ech) was published November 15, 2026; HuskyCT submission remains pending. No public live demo has been deployed.
+The [five-page design](documents/CSE4402_TLS_ECH_Design_Nov22.pdf) is due November 22 at 11:59 p.m. EST. It specifies the goals, software components, and experimental methods. The written report and [GitHub code link](https://github.com/mtkabir7443/cse4402-browser-tls-ech) are due December 18. HuskyCT submission remains pending.
 
 Private research records and correspondence remain outside this source package. The included sanitized dataset covers all 252 cells; its consistency verifier is distinct from the full raw-evidence audit retained locally.
